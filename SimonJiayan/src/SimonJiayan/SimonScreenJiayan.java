@@ -8,6 +8,9 @@ import gui.components.Action;
 import gui.components.TextLabel;
 import gui.components.Visible;
 import gui.screens.ClickableScreen;
+import partnerCodeInHerePlease.ButtonHans;
+import partnerCodeInHerePlease.MoveHans;
+import partnerCodeInHerePlease.ProgressHans;
 
 public class SimonScreenJiayan extends ClickableScreen implements Runnable{
 	private ProgressInterfaceJiayan progress;
@@ -29,8 +32,11 @@ public class SimonScreenJiayan extends ClickableScreen implements Runnable{
 		// TODO Auto-generated method stub
 		roundNum = 0;
 		addButtons();
+		for(ButtonInterfaceJiayan b:buttons){
+			viewObjects.add(b);
+		}
 		progress = getProgress();
-		label = new TextLabel(350,220,100,40, "Let's Play Simon!");
+		label = new TextLabel(350,220,200,40, "Let's Play Simon!");
 		sequence = new ArrayList<MoveInterfaceJiayan>();
 		lastSelected = -1;
 		sequence.add(randomMove());
@@ -40,83 +46,73 @@ public class SimonScreenJiayan extends ClickableScreen implements Runnable{
 	}
 
 	private MoveInterfaceJiayan randomMove() {
-		int random = (int) Math.random();
+		int random = (int) (Math.random()*buttons.length);
 		while(random==lastSelected)
 		{
-			random = lastSelected*random;
+			random = (int) (Math.random()*buttons.length);
 		}
-		return getMove(b);
+		return getMove(buttons[random]);
 	}
 
 	private MoveInterfaceJiayan getMove(ButtonInterfaceJiayan b) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MoveHans(b);
 	}
 
 	private ProgressInterfaceJiayan getProgress() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ProgressHans();
 	}
 
 	private void addButtons() {
 		int numButtons = 6;
+		buttons = new ButtonInterfaceJiayan[numButtons];
 		Color[] colors = {Color.blue, Color.pink, Color.yellow, Color.green, Color.black, Color.red};
-		for(int i=0; i<numButtons; i++)
-		{
-			final ButtonInterfaceJiayan b = getAButton();
-			b.setColor(); 
-		    b.setX();
-		    b.setY();
-		    b.setAction(new Action(){
-
-		    	public void act(){
-		    		 if(acceptingInput)
-		    		 {
-		    			 Thread blink = new Thread(new Runnable(){
-
-		    				 public void run(){
-		    					 b.highlight();
-		    					 try {
-									Thread.sleep(800);
+		for(int i=0;i<buttons.length;i++){
+			buttons[i] = getAButton(10, 50+(60*i));
+			final ButtonInterfaceJiayan b = buttons[i];
+			b.setColor(colors[i]);
+			b.setAction(new Action(){
+				@Override
+				public void act() {
+					if(acceptingInput){
+						Thread buttonPress = new Thread(new Runnable(){
+							@Override
+							public void run() {
+								b.highlight();
+								try {
+									Thread.sleep(500);
 								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-		    					 dim();
-		    				 }
-
-							private void dim() {
-								// TODO Auto-generated method stub
+								b.dim();
 								
 							}
-
-		    				 });
-		    			 blink.start();
-		    			if(b == sequence.get(sequenceIndex).getButton())
-		    			{
-		    				sequenceIndex++;
-		    			}
-		    			else
-		    			{
-		    				progress.gameOver();
-		    			}
-		    			if(sequenceIndex == sequence.size())
-		    			{
-		    				Thread nextRound = new Thread(SimonScreenJiayan.this);
-		    				nextRound.start();
-		    			}
-		    			viewObjects.add(b);
-		    		 }
-		    	}
-		    	});
-
+							
+						});
+					
+						buttonPress.start();
+						
+						if(acceptingInput && sequence.get(sequenceIndex).getButton() == b){
+							sequenceIndex++;
+						}else if(acceptingInput){
+							progress.gameOver();
+							acceptingInput=false;
+							return;
+						}
+						if(sequenceIndex == sequence.size() && acceptingInput){
+							Thread nextRound = new Thread(SimonScreenJiayan.this);
+							nextRound.start();
+						}
+					}
+				}
+			});
 		}
+		   
+		    		
 	}
 
 
-	private ButtonInterfaceJiayan getAButton() {
-		// TODO Auto-generated method stub
-		return null;
+	private ButtonInterfaceJiayan getAButton(int i, int j) {
+		return new ButtonHans(i,j);
 	}
 
 	@Override
@@ -124,7 +120,6 @@ public class SimonScreenJiayan extends ClickableScreen implements Runnable{
 		// TODO Auto-generated method stub
 		  label.setText("");
 		    nextRound();
-		    acceptingInput = false;
 		    roundNum++;
 	}
 	private void nextRound() {
@@ -148,22 +143,23 @@ public class SimonScreenJiayan extends ClickableScreen implements Runnable{
 		// TODO Auto-generated method stub
 		ButtonInterfaceJiayan b = null;
         for(MoveInterfaceJiayan i: sequence){
-                if(b!=null)
-                       {
-							b.dim();
-							}
-							b = i.getButton();
-							b.highlight();
-							try {                        
-							Thread.sleep((int)(2000*(1.0/roundNum)));
-							}        
-							catch (InterruptedException e) {
-							e.printStackTrace();
-							}
-							}
-							b.dim();
-					}
-
+            if(b!=null)
+            {
+            	b.dim();
+			}
+			b = i.getButton();
+			b.highlight();
+			try {                        
+			Thread.sleep((int)(1000*(1.0/roundNum)));
+			}        
+			catch (InterruptedException e) {
+			e.printStackTrace();
+			}
+			b.dim();
+		}
+			
+	}
+	
 	private void changeText(String text) {
 		label.setText(text);
 		try {

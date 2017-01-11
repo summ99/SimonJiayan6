@@ -1,69 +1,70 @@
 package partnerCodeInHerePlease;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import SimonJiayan.ButtonInterfaceJiayan;
 import gui.components.Action;
 import gui.components.Component;
 
 public class ButtonHans extends Component implements ButtonInterfaceJiayan {
-
-	public ButtonHans(int x, int y, int w, int h) {
-		super(x, y, w, h);
-		// TODO Auto-generated constructor stub
+	private Action action;
+	private Color c;
+	private boolean isOn;
+	
+	public ButtonHans(int x,int y) {
+		super(x,y,60,60);
+		isOn = false;
 	}
 
 	@Override
 	public void act() {
-		// TODO Auto-generated method stub
+		this.action.act();
+	}	
 
+	@Override
+	public boolean isHovered(int x, int y) {
+		return ((x>this.getX() && x<(this.getX()+this.getWidth())) && (y>this.getY() && y<(this.getY()+this.getHeight())));
 	}
 
 	@Override
-	public boolean isHovered(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void setColor() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setY() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setX() {
-		// TODO Auto-generated method stub
+	public void setColor(Color c) {
+		this.c = c;
 
 	}
 
 	@Override
 	public void setAction(Action a) {
-		// TODO Auto-generated method stub
+		this.action = a;
 
 	}
 
 	@Override
 	public void highlight() {
-		// TODO Auto-generated method stub
+		isOn = true;
+		update();
 
 	}
 
 	@Override
 	public void dim() {
-		// TODO Auto-generated method stub
+		isOn = false;
+		update();
 
 	}
 
 	@Override
-	public void update(Graphics2D arg0) {
-		// TODO Auto-generated method stub
+	public void update(Graphics2D g) {
+		g = clear();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		if(isOn)
+			g.setColor(this.c);
+		else
+			g.setColor(Color.gray);
+		g.fillOval(0,0, 55, 55);
+		g.setColor(Color.black);
+		g.drawOval(0,0, 55, 55);
 
 	}
 

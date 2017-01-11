@@ -4,15 +4,15 @@ import SimonJiayan.ButtonInterfaceJiayan;
 import SimonJiayan.MoveInterfaceJiayan;
 
 public class MoveHans implements MoveInterfaceJiayan {
-
-	public MoveHans() {
-		// TODO Auto-generated constructor stub
+	private ButtonInterfaceJiayan b;
+	
+	public MoveHans(ButtonInterfaceJiayan b) {
+		this.b = b;
 	}
 
 	@Override
 	public ButtonInterfaceJiayan getButton() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.b;
 	}
 
 }
