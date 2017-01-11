@@ -51,6 +51,7 @@ public class SimonScreenJiayan extends ClickableScreen implements Runnable{
 		{
 			random = (int) (Math.random()*buttons.length);
 		}
+		lastSelected = random;
 		return getMove(buttons[random]);
 	}
 
@@ -120,7 +121,6 @@ public class SimonScreenJiayan extends ClickableScreen implements Runnable{
 		// TODO Auto-generated method stub
 		  label.setText("");
 		    nextRound();
-		    roundNum++;
 	}
 	private void nextRound() {
 		// TODO Auto-generated method stub
